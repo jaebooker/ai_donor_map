@@ -1,0 +1,64 @@
+/* Basic reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  line-height: 1.6;
+  background: #f9fafb;
+  color: #1f2937;
+}
+
+header {
+  padding: 1rem 2rem;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+header h1 {
+  font-size: 1.75rem;
+  margin-bottom: 0.5rem;
+}
+
+header p {
+  max-width: 800px;
+  color: #4b5563;
+}
+
+/* Map container. Using a fixed min‑height ensures the map displays even
+   when the viewport height calculation fails on some browsers. */
+#map {
+  width: 100%;
+  /* Set a minimum height so the map is visible if the vh calculation fails.
+     The calc expression reserves space for the header on tall screens.
+     On shorter screens the min-height (500px) prevents the map from
+     collapsing to zero height. */
+  min-height: 500px;
+  height: calc(100vh - 6rem);
+}
+
+/* Legend styling */
+.legend {
+  background: white;
+  padding: 0.5rem;
+  border-radius: 4px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  line-height: 1.4;
+  font-size: 0.875rem;
+}
+.legend h4 {
+  margin-bottom: 0.3rem;
+  font-size: 0.9rem;
+}
+.legend i {
+  width: 12px;
+  height: 12px;
+  display: inline-block;
+  margin-right: 6px;
+  border-radius: 50%;
+  vertical-align: middle;
+}

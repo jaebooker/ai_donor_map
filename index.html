@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Safety Donation Map</title>
+  <!-- Leaflet CSS -->
+  <!-- Leaflet CSS: omit integrity/crossorigin attributes to avoid blocking
+       issues when loading from file:// scheme -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>AI Safety Donation Map</h1>
+    <p>
+      Explore non‑profit organisations and projects working on AI safety.
+      Use the layer controls in the top right of the map to toggle subfields.
+      Click a marker to read a short description and visit their donation page.
+    </p>
+  </header>
+  <main>
+    <div id="map"></div>
+  </main>
+  <!-- Leaflet JS -->
+  <!-- Leaflet JS: omit integrity/crossorigin to ensure proper loading -->
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+  ></script>
+  <script src="script.js"></script>
+</body>
+</html>
