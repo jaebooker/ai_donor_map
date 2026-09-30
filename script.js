@@ -31,11 +31,16 @@
   const map = L.map('map', { worldCopyJump: true, zoomControl: false }).setView([35, -40], 3);
   L.control.zoom({ position: 'topright' }).addTo(map);
   const dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  L.tileLayer(`https://{s}.basemaps.cartocdn.com/${dark ? 'dark_all' : 'light_all'}/{z}/{x}/{y}{r}.png`, {
-    subdomains: 'abcd',
-    maxZoom: 19,
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
-  }).addTo(map);
+  // Esri Canvas basemaps: keyless (CARTO began requiring an API key in Sept 2026).
+  const esri = (name) =>
+    `https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/${name}/MapServer/tile/{z}/{y}/{x}`;
+  const tone = dark ? 'Dark' : 'Light';
+  const tileOpts = { maxZoom: 16, attribution: 'Tiles &copy; <a href="https://www.esri.com">Esri</a> &mdash; Esri, HERE, Garmin, &copy; OpenStreetMap contributors' };
+  L.tileLayer(esri(`World_${tone}_Gray_Base`), tileOpts).addTo(map);
+  map.createPane('labels');
+  map.getPane('labels').style.zIndex = 450;
+  map.getPane('labels').style.pointerEvents = 'none';
+  L.tileLayer(esri(`World_${tone}_Gray_Reference`), { maxZoom: 16, pane: 'labels' }).addTo(map);
 
   const cluster = L.markerClusterGroup({
     showCoverageOnHover: false,
