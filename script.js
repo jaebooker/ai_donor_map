@@ -28,7 +28,13 @@
   });
 
   // ---------- Map ----------
-  const map = L.map('map', { worldCopyJump: true, zoomControl: false }).setView([35, -40], 3);
+  const map = L.map('map', {
+    worldCopyJump: true,
+    zoomControl: false,
+    minZoom: 2,
+    maxBounds: [[-85, -540], [85, 540]],
+    maxBoundsViscosity: 1
+  }).setView([35, -40], 3);
   L.control.zoom({ position: 'topright' }).addTo(map);
   const dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
   // Esri Canvas basemaps: keyless (CARTO began requiring an API key in Sept 2026).
