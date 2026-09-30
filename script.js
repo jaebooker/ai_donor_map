@@ -1,204 +1,253 @@
 /*
- * AI Safety Donation Map
- *
- * This script initialises a Leaflet map and populates it with markers
- * representing organisations and projects working on AI safety. Each
- * marker includes a brief description and a link to donate. Markers are
- * grouped into overlay layers based on subfields (e.g. technical research,
- * policy & governance), and a built‑in layer control allows users to
- * toggle subfields on and off. A legend in the bottom left of the map
- * shows the colour associated with each subfield.
+ * AI Safety Donor Map
+ * Data lives in data/orgs.json. Each org gets one marker coloured by its
+ * primary (first) category; filters match an org if any of its categories
+ * is active. Remote orgs appear in the list only.
  */
+(async function () {
+  const res = await fetch('data/orgs.json', { cache: 'no-cache' });
+  const data = await res.json();
+  const cats = Object.fromEntries(data.categories.map((c) => [c.id, c]));
+  const orgs = data.orgs.slice().sort((a, b) => a.name.localeCompare(b.name));
 
-// Dataset of organisations/projects. Each entry contains a name, type,
-// subfields (one or more categories), a short description, coordinates and
-// a donation URL.
-const data = [
-  {
-    name: 'Machine Intelligence Research Institute (MIRI)',
-    type: 'Organization',
-    subfields: ['Technical AI Safety Research'],
-    description:
-      'MIRI is a research nonprofit that studies technical AI safety. Their work aims to reduce existential risks from developing smarter‑than‑human AI and has helped found the field of AI alignment【264482696110063†L38-L41】.',
-    lat: 37.7937,
-    lng: -122.3969,
-    donationUrl: 'https://intelligence.org/donate/'
-  },
-  {
-    name: 'Center for AI Safety (CAIS)',
-    type: 'Organization',
-    subfields: ['Technical AI Safety Research', 'Field-building & Education'],
-    description:
-      'CAIS is an AI safety non‑profit focused on reducing societal‑scale risks from artificial intelligence. Donations support research to remove dangerous behaviours in AIs, field‑building efforts that bring more experts into AI safety, and advocacy to advise governments【791617804177327†L46-L82】.',
-    lat: 37.7904,
-    lng: -122.4043,
-    donationUrl: 'https://safe.ai/donate'
-  },
-  {
-    name: 'Ought',
-    type: 'Organization',
-    subfields: ['Technical AI Safety Research'],
-    description:
-      'Ought is a non‑profit research lab whose mission is to scale up good reasoning. The team studies how machine learning can help with thought and reflection, aiming to develop AI systems that support high‑quality reasoning【758199386228696†L7-L11】. Donations support their work on AI alignment and reasoning tools【369513947221023†L28-L33】.',
-    lat: 37.7749,
-    lng: -122.4194,
-    donationUrl: 'https://ought.org/donate'
-  },
-  {
-    name: 'Center for Human-Compatible AI (CHAI)',
-    type: 'Organization',
-    subfields: ['Technical AI Safety Research'],
-    description:
-      'CHAI is a multi‑institution research group at UC Berkeley focused on ensuring that future AI systems are provably beneficial. They develop conceptual and technical tools to reorient AI research away from arbitrary objective fulfilment towards aligned behaviour【86589987909197†L38-L50】. Donations go through UC Berkeley’s giving portal【639228649751588†L31-L37】.',
-    lat: 37.8715,
-    lng: -122.2730,
-    donationUrl: 'https://humancompatible.ai/donate/'
-  },
-  {
-    name: 'Future of Life Institute (FLI)',
-    type: 'Organization',
-    subfields: ['Policy & Governance'],
-    description:
-      'The Future of Life Institute works to steer transformative technologies away from extreme, large‑scale risks and toward benefiting life. Donations enable the organisation to grow, fund new projects and support others working to reduce global catastrophic risks【436863307379863†L69-L83】.',
-    lat: 42.3736,
-    lng: -71.1097,
-    donationUrl: 'https://futureoflife.org/about-us/donate/'
-  },
-  {
-    name: 'Long‑Term Future Fund (LTFF)',
-    type: 'Fund',
-    subfields: ['Funding & Grantmaking'],
-    description:
-      'The Long‑Term Future Fund makes grants that aim to positively influence the long‑term trajectory of civilization. It addresses global catastrophic risks—particularly those from advanced AI and pandemics—and promotes longtermist ideas【271231481449494†L58-L63】.',
-    lat: 51.7520,
-    lng: -1.2577,
-    donationUrl: 'https://funds.effectivealtruism.org/funds/far-future'
-  },
-  {
-    name: 'AI Safety and Governance Fund (AISGF)',
-    type: 'Organization',
-    subfields: ['Policy & Governance'],
-    description:
-      'AISGF is a nonpartisan 501(c)(4) organisation dedicated to ensuring AI and other technologies benefit humanity. It advocates for AI to be developed safely and securely in alignment with human values and encourages public engagement and donations【253968071308808†L4-L8】【253968071308808†L45-L53】.',
-    lat: 38.9072,
-    lng: -77.0369,
-    donationUrl: 'https://aisgf.us/'
-  },
-  {
-    name: 'AI Impacts',
-    type: 'Organization',
-    subfields: ['Technical AI Safety Research'],
-    description:
-      'AI Impacts researches decision‑relevant questions about the future of AI. Further donations support their research by covering operating costs, internships and additional researchers; the group notes that they are not fully funded and can make good use of additional funds【256029047877325†L30-L41】.',
-    lat: 37.8715,
-    lng: -122.2730,
-    donationUrl: 'https://aiimpacts.org/donate/'
-  },
-  {
-    name: 'Apart Research',
-    type: 'Organization',
-    subfields: ['Field-building & Education'],
-    description:
-      'Apart Research runs a global AI safety research accelerator and talent pipeline. They have engaged thousands of participants in research sprints and produced numerous publications; donations help expand this work, supporting hackathons, fellowships and new research【75538343774276†L56-L67】.',
-    lat: 55.6761,
-    lng: 12.5683,
-    donationUrl: 'https://apartresearch.com/donate'
-  },
-  {
-    name: 'Stampy’s AI Safety Info',
-    type: 'Project',
-    subfields: ['Field-building & Education'],
-    description:
-      'Stampy’s AI Safety Info aims to provide a reliable, accessible source of information on existential risk from AI. Donations support distillation fellowships, automated search and summary tools, and improvements to the site to better educate the public【605572984977668†L27-L41】.',
-    lat: 39.1582,
-    lng: -75.5244,
-    donationUrl: 'https://www.every.org/aisafetyinfo'
-  }
-];
+  const state = {
+    q: '',
+    cats: new Set(data.categories.map((c) => c.id)),
+    type: '',
+    donateOnly: false,
+    selected: null
+  };
 
-// Colour palette for subfields. Colours chosen to be distinct and colour‑blind
-// friendly (blue, orange, red, green).
-const categoryColors = {
-  'Technical AI Safety Research': '#0074D9',
-  'Field-building & Education': '#FF851B',
-  'Policy & Governance': '#FF4136',
-  'Funding & Grantmaking': '#2ECC40'
-};
+  const $ = (id) => document.getElementById(id);
+  const esc = (s) =>
+    String(s).replace(/[&<>"']/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+  const isMobile = () => window.matchMedia('(max-width: 760px)').matches;
 
-// Initialise the map centred roughly over the Atlantic. The zoom level is set
-// to 2 so that all markers are visible by default.
-const map = L.map('map').setView([20, 0], 2);
-
-// Add OpenStreetMap tile layer.
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  attribution:
-    'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors'
-}).addTo(map);
-
-// Create layer groups for each subfield. We will fill these later with
-// markers. Using layer groups allows us to toggle categories via the
-// layers control.
-const layers = {};
-Object.keys(categoryColors).forEach((subfield) => {
-  layers[subfield] = L.layerGroup();
-});
-
-// For each organisation/project, add a marker to the appropriate layer(s).
-data.forEach((item) => {
-  item.subfields.forEach((sf) => {
-    // Create a circle marker with category colour.
-    const marker = L.circleMarker([item.lat, item.lng], {
-      radius: 8,
-      color: categoryColors[sf],
-      fillColor: categoryColors[sf],
-      fillOpacity: 0.8
-    });
-    // Build popup HTML. Use target="_blank" to open donation links in a new tab.
-    const popupContent = `
-      <strong>${item.name}</strong><br />
-      <span>${item.description}</span><br />
-      <a href="${item.donationUrl}" target="_blank" rel="noopener">Donate</a>
-    `;
-    marker.bindPopup(popupContent);
-    marker.addTo(layers[sf]);
+  $('verified').textContent = new Date(data.lastVerified + 'T12:00:00').toLocaleDateString(undefined, {
+    year: 'numeric', month: 'long'
   });
-});
 
-// Add all layers to the map initially.
-Object.values(layers).forEach((layerGroup) => {
-  layerGroup.addTo(map);
-});
+  // ---------- Map ----------
+  const map = L.map('map', { worldCopyJump: true, zoomControl: false }).setView([35, -40], 3);
+  L.control.zoom({ position: 'topright' }).addTo(map);
+  const dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  L.tileLayer(`https://{s}.basemaps.cartocdn.com/${dark ? 'dark_all' : 'light_all'}/{z}/{x}/{y}{r}.png`, {
+    subdomains: 'abcd',
+    maxZoom: 19,
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
+  }).addTo(map);
 
-// Create an overlay layers object for the layer control. Keys are labels and
-// values are the corresponding layer groups.
-const overlayLayers = {};
-Object.keys(layers).forEach((sf) => {
-  overlayLayers[sf] = layers[sf];
-});
+  const cluster = L.markerClusterGroup({
+    showCoverageOnHover: false,
+    maxClusterRadius: 40,
+    spiderfyDistanceMultiplier: 1.6,
+    iconCreateFunction: (c) =>
+      L.divIcon({ html: `<div class="cluster">${c.getChildCount()}</div>`, className: '', iconSize: [36, 36] })
+  });
+  map.addLayer(cluster);
 
-// Add layer control to the map. This provides checkboxes to toggle
-// subfields on and off. Set collapsed to false so the control is open by
-// default on desktop.
-L.control.layers(null, overlayLayers, { collapsed: false }).addTo(map);
+  const pinIcon = (org, active) =>
+    L.divIcon({
+      className: '',
+      html: `<div class="pin${active ? ' active' : ''}" style="background:${cats[org.categories[0]].color}"></div>`,
+      iconSize: [18, 18],
+      iconAnchor: [9, 9],
+      popupAnchor: [0, -10]
+    });
 
-// Add a legend showing the colours associated with each subfield. This
-// legend is a custom Leaflet control positioned in the bottom left.
-const legend = L.control({ position: 'bottomleft' });
-legend.onAdd = function () {
-  const div = L.DomUtil.create('div', 'legend');
-  div.innerHTML = '<h4>Subfields</h4>';
-  for (const sf of Object.keys(categoryColors)) {
-    const color = categoryColors[sf];
-    div.innerHTML += `<i style="background:${color}"></i> ${sf}<br />`;
+  const tagDots = (org) =>
+    `<span class="tags" aria-hidden="true">${org.categories
+      .map((c) => `<i style="background:${cats[c].color}" title="${esc(cats[c].label)}"></i>`)
+      .join('')}</span>`;
+
+  const catNames = (org) => org.categories.map((c) => cats[c].label).join(' · ');
+
+  const actionsHtml = (org) => {
+    const donate = org.donateUrl
+      ? `<a class="btn primary" href="${esc(org.donateUrl)}" target="_blank" rel="noopener">Donate</a>`
+      : '';
+    const site = `<a class="btn" href="${esc(org.website)}" target="_blank" rel="noopener">Website</a>`;
+    return `<div class="actions">${donate}${site}</div>`;
+  };
+
+  const extrasHtml = (org) =>
+    (org.extraLinks || [])
+      .map((l) => `<div class="extra">Also: <a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label)}</a></div>`)
+      .join('');
+
+  const popupHtml = (org) => `
+    <h3>${esc(org.name)}</h3>
+    <div class="meta">${tagDots(org)}<span>${esc(org.city)}</span><span>${esc(org.type)}</span></div>
+    <div>${esc(org.description)}</div>
+    ${org.taxStatus ? `<div class="extra"><span class="badge">${esc(org.taxStatus)}</span></div>` : ''}
+    ${extrasHtml(org)}
+    ${actionsHtml(org)}`;
+
+  const markers = {};
+  orgs.forEach((org) => {
+    if (org.remote) return;
+    const m = L.marker([org.lat, org.lng], { icon: pinIcon(org, false), title: org.name, riseOnHover: true });
+    m.bindPopup(popupHtml(org), { maxWidth: 320, autoPanPadding: [30, 30] });
+    m.on('click', () => select(org.id, { fromMap: true }));
+    m.on('popupclose', () => {
+      if (state.selected === org.id) select(null, { fromMap: true });
+    });
+    markers[org.id] = m;
+  });
+
+  // ---------- Filters ----------
+  const chips = $('chips');
+  data.categories.forEach((c) => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'chip';
+    b.style.setProperty('--c', c.color);
+    b.setAttribute('aria-pressed', 'true');
+    b.dataset.cat = c.id;
+    b.innerHTML = `<span class="dot"></span>${esc(c.label)}`;
+    b.addEventListener('click', () => {
+      // From "all", a click isolates that category; after that, clicks toggle.
+      const all = state.cats.size === data.categories.length;
+      if (all) {
+        state.cats = new Set([c.id]);
+      } else if (state.cats.has(c.id)) {
+        state.cats.delete(c.id);
+        if (state.cats.size === 0) state.cats = new Set(data.categories.map((x) => x.id));
+      } else {
+        state.cats.add(c.id);
+      }
+      render({ refit: true });
+    });
+    chips.appendChild(b);
+  });
+  const reset = document.createElement('button');
+  reset.type = 'button';
+  reset.className = 'chip';
+  reset.textContent = 'All';
+  reset.addEventListener('click', () => {
+    state.cats = new Set(data.categories.map((x) => x.id));
+    render({ refit: true });
+  });
+  chips.appendChild(reset);
+
+  let t;
+  $('search').addEventListener('input', (e) => {
+    clearTimeout(t);
+    t = setTimeout(() => {
+      state.q = e.target.value.trim().toLowerCase();
+      render({ refit: true });
+    }, 120);
+  });
+  $('type-filter').addEventListener('change', (e) => {
+    state.type = e.target.value;
+    render({ refit: true });
+  });
+  $('donate-only').addEventListener('change', (e) => {
+    state.donateOnly = e.target.checked;
+    render({ refit: true });
+  });
+
+  const matches = (org) => {
+    if (!org.categories.some((c) => state.cats.has(c))) return false;
+    if (state.type && org.type !== state.type) return false;
+    if (state.donateOnly && !org.donateUrl) return false;
+    if (state.q) {
+      const hay = `${org.name} ${org.city} ${org.description} ${catNames(org)} ${org.type}`.toLowerCase();
+      if (!state.q.split(/\s+/).every((w) => hay.includes(w))) return false;
+    }
+    return true;
+  };
+
+  // ---------- Render ----------
+  const list = $('list');
+  function render({ refit = false } = {}) {
+    chips.querySelectorAll('[data-cat]').forEach((b) => b.setAttribute('aria-pressed', String(state.cats.has(b.dataset.cat))));
+    const visible = orgs.filter(matches);
+    if (state.selected && !visible.some((o) => o.id === state.selected)) state.selected = null;
+
+    cluster.clearLayers();
+    const shown = visible.filter((o) => markers[o.id]).map((o) => markers[o.id]);
+    cluster.addLayers(shown);
+
+    list.innerHTML = '';
+    if (!visible.length) {
+      list.innerHTML = '<li class="empty">No matches. Try clearing a filter.</li>';
+    }
+    visible.forEach((org) => {
+      const li = document.createElement('li');
+      li.className = 'card' + (org.id === state.selected ? ' active' : '');
+      li.tabIndex = 0;
+      li.dataset.id = org.id;
+      li.innerHTML = `
+        <h3>${esc(org.name)}</h3>
+        <div class="meta">${tagDots(org)}<span>${esc(org.city)}</span><span>${esc(org.type)}</span>${
+          org.remote ? '<span class="badge">Remote</span>' : ''
+        }${org.donateUrl ? '' : '<span class="badge">No donate page</span>'}</div>
+        <p class="desc">${esc(org.description)}</p>
+        ${org.taxStatus ? `<div class="extra"><span class="badge">${esc(org.taxStatus)}</span></div>` : ''}
+        ${extrasHtml(org).replace(/class="extra"/g, 'class="extra actions-extra"')}
+        ${actionsHtml(org)}`;
+      li.querySelectorAll('.actions-extra').forEach((el) => (el.style.display = org.id === state.selected ? '' : 'none'));
+      li.addEventListener('click', (e) => {
+        if (e.target.closest('a')) return;
+        select(state.selected === org.id ? null : org.id);
+      });
+      li.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          select(state.selected === org.id ? null : org.id);
+        }
+      });
+      list.appendChild(li);
+    });
+
+    const nOrgs = visible.length;
+    const nRemote = visible.filter((o) => o.remote).length;
+    $('count').textContent = `${nOrgs} of ${orgs.length} listings${nRemote ? ` (${nRemote} remote, list only)` : ''}`;
+
+    if (refit && shown.length) {
+      const b = L.latLngBounds(shown.map((m) => m.getLatLng()));
+      map.fitBounds(b.pad(0.25), { maxZoom: 9, animate: true });
+    }
   }
-  return div;
-};
-legend.addTo(map);
 
-// Fit the map bounds to show all markers. We compute a LatLngBounds from
-// all data points. If there is only one point, Leaflet may not adjust
-// correctly, so handle that case by keeping the default view.
-if (data.length > 1) {
-  const bounds = L.latLngBounds(data.map((d) => [d.lat, d.lng]));
-  map.fitBounds(bounds.pad(0.2));
-}
+  function select(id, { fromMap = false } = {}) {
+    const prev = state.selected;
+    state.selected = id;
+    if (prev && markers[prev]) markers[prev].setIcon(pinIcon(orgs.find((o) => o.id === prev), false));
+    const org = id && orgs.find((o) => o.id === id);
+    if (org && markers[id]) markers[id].setIcon(pinIcon(org, true));
+
+    history.replaceState(null, '', id ? `#${id}` : location.pathname + location.search);
+
+    list.querySelectorAll('.card').forEach((c) => {
+      const on = c.dataset.id === id;
+      c.classList.toggle('active', on);
+      c.querySelectorAll('.actions-extra').forEach((el) => (el.style.display = on ? '' : 'none'));
+    });
+    const card = id && list.querySelector(`[data-id="${id}"]`);
+    if (card) card.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+
+    if (org && !fromMap && markers[id]) {
+      if (isMobile()) setListOpen(false);
+      cluster.zoomToShowLayer(markers[id], () => markers[id].openPopup());
+    }
+  }
+
+  // ---------- Mobile toggle ----------
+  const toggle = $('toggle-view');
+  function setListOpen(open) {
+    document.body.classList.toggle('show-list', open);
+    toggle.textContent = open ? 'Map' : 'List';
+    toggle.setAttribute('aria-expanded', String(open));
+    if (!open) setTimeout(() => map.invalidateSize(), 220);
+  }
+  toggle.addEventListener('click', () => setListOpen(!document.body.classList.contains('show-list')));
+
+  render({ refit: true });
+
+  const fromHash = decodeURIComponent(location.hash.slice(1));
+  if (fromHash && orgs.some((o) => o.id === fromHash)) {
+    setTimeout(() => select(fromHash), 300);
+  }
+})();
