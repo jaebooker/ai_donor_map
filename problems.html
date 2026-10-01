@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Safety Donor Map: By problem</title>
+  <meta name="description" content="AI safety nonprofits, projects and funds organized by the problem they're working to solve, for donors deciding where to give." />
+  <meta property="og:title" content="AI Safety Donor Map: By problem" />
+  <meta property="og:description" content="Start with what you want your donation to fix, then see who is working on it." />
+  <meta name="theme-color" content="#0f172a" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='14' fill='%230072B2'/><circle cx='16' cy='16' r='6' fill='%23E69F00'/></svg>" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="problems-page">
+  <header class="topbar">
+    <div class="brand">
+      <h1>AI Safety Donor Map</h1>
+      <p class="tagline">Nonprofits, projects and funds working to make advanced AI go well.</p>
+    </div>
+    <nav class="views" aria-label="Views">
+      <a href="/">Map</a>
+      <a href="/problems" aria-current="page">By problem</a>
+    </nav>
+  </header>
+
+  <div class="pb-layout">
+    <aside class="pb-rail" aria-label="Problems">
+      <div class="pb-intro">
+        <h2>What do you want your donation to fix?</h2>
+        <p>Each organization is listed under the problems it works on. Pick one to see who is tackling it and what a gift pays for.</p>
+      </div>
+      <ol id="problem-list" class="pb-list"></ol>
+      <p class="pb-note">Counts cover this directory's <span id="total"></span> listings, not the whole field. A low count can mean a neglected problem, or one this directory hasn't covered yet.</p>
+    </aside>
+
+    <main id="detail" class="pb-detail" tabindex="-1" aria-live="polite"></main>
+  </div>
+
+  <footer class="pb-foot">
+    <p>Problem tags and summaries are editorial and simplified; most organizations work on several problems. Listings are informational, not endorsements. Check each org's own site before giving. Links last checked <span id="verified"></span>.</p>
+    <p><a href="https://github.com/jaebooker/ai_donor_map/issues/new?title=Suggest%20an%20org" target="_blank" rel="noopener">Suggest an org or correction</a></p>
+  </footer>
+
+  <script src="problems.js"></script>
+</body>
+</html>
