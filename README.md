@@ -27,7 +27,7 @@ The first category sets the marker colour. `problems` uses ids from the top-leve
 
 ## Running locally
 
-Static site, no build step: `npx serve .` then open http://localhost:3000.
+Static site, no build step: `npx serve .` then open http://localhost:3000..
 
 ## Deploying
 
