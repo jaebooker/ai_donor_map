@@ -6,7 +6,7 @@ An interactive map of AI safety nonprofits, projects and funds that accept donat
 - Search by name, city or keyword; filter by type or "has donate page"
 - Clustered markers for dense hubs (Berkeley, London, DC); remote orgs appear in the list
 - Deep links: `/#metr` opens a specific org
-- **By problem** view (`/problems`): orgs grouped by the problem they're working to solve, for donors who start from what they want to fix. Deep links like `/problems#legislation`
+- **By problem** view (`/problems`): a visual landscape of 11 problems in 6 colored zones, with each org placed in its main problem and dashed links to the others it works on. For donors who start from what they want to fix. Deep links like `/problems#legislation` or `/problems#metr`
 - Light and dark mode
 
 ## Editing the data
@@ -23,7 +23,7 @@ All listings live in `data/orgs.json`. Each entry:
 }
 ```
 
-The first category sets the marker colour. `problems` uses ids from the top-level `problems` list; the first one is the org's main focus, the rest show under "Also working on this". Set `"remote": true` (and omit lat/lng) for orgs with no single location.
+The first category sets the marker colour. `problems` uses ids from the top-level `problems` list (each problem belongs to one of the `zones`); the first one is the org's main focus, the rest show under "Also working on this". Set `"remote": true` (and omit lat/lng) for orgs with no single location.
 
 ## Running locally
 

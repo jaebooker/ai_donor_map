@@ -8,18 +8,26 @@
     { "id": "fieldbuilding", "label": "Field-building & education", "color": "#E69F00" },
     { "id": "funding", "label": "Funds & grantmaking", "color": "#009E73" }
   ],
+  "zones": [
+    {"id": "technical", "label": "Technical safety", "color": "#0072B2"},
+    {"id": "evidence", "label": "Evidence & foresight", "color": "#56B4E9"},
+    {"id": "governance", "label": "Governance", "color": "#D55E00"},
+    {"id": "society", "label": "Public & accountability", "color": "#CC79A7"},
+    {"id": "field", "label": "Building the field", "color": "#E69F00"},
+    {"id": "funding", "label": "Funding", "color": "#009E73"}
+  ],
   "problems": [
-    {"id": "alignment", "label": "Alignment & control", "problem": "Nobody knows how to make a much smarter-than-human system reliably do what we intend, or how to stop it safely if it doesn't.", "buys": "Research time on alignment, interpretability and control: the technical core of the problem."},
-    {"id": "measurement", "label": "Dangerous-capability evals", "problem": "We can't reliably tell how dangerous a new model is before it's deployed.", "buys": "Independent testing of frontier models and hard evidence about dangerous capabilities."},
-    {"id": "foresight", "label": "Forecasting & strategy", "problem": "Decision-makers lack credible, specific forecasts of where AI is heading and how fast.", "buys": "Forecasts, scenarios and surveys that make timelines and risks concrete for decision-makers."},
-    {"id": "policy-research", "label": "Policy research & expertise", "problem": "Governments don't have the ideas or the in-house expertise to regulate frontier AI well.", "buys": "Policy research and people placed inside government who understand the technology."},
-    {"id": "legislation", "label": "Laws & lobbying", "problem": "There are still few binding rules on frontier AI development, and good bills need champions to pass.", "buys": "Direct work with legislators: drafting bills, briefing lawmakers and campaigning for them. Often not tax-deductible."},
-    {"id": "public", "label": "Public understanding", "problem": "Most people haven't heard the case for AI risk, so there is little public demand for action.", "buys": "Explanations, demonstrations and campaigns that reach the general public."},
-    {"id": "accountability", "label": "Corporate accountability", "problem": "AI companies set their own safety commitments, and little stops them from quietly weakening them.", "buys": "Independent watchdogs that track, grade and publicize how labs keep their promises."},
-    {"id": "talent", "label": "Talent pipeline", "problem": "Too few skilled people work on these problems, and entry points are scarce.", "buys": "Courses, fellowships and mentorship that turn interested people into productive researchers and policy staff."},
-    {"id": "infrastructure", "label": "Field infrastructure", "problem": "The field needs shared places to think, meet and find information, and those are rarely anyone's job to fund.", "buys": "Forums, venues and directories that everyone in the field relies on."},
-    {"id": "welfare", "label": "AI welfare", "problem": "We may build AI systems that deserve moral consideration without knowing it.", "buys": "Early research on AI sentience and practical welfare guidance for labs."},
-    {"id": "unfunded", "label": "Neglected projects", "problem": "Promising early-stage projects and unconventional researchers often fall through the cracks of big funders.", "buys": "Small, fast grants to work that larger funders miss. A fund picks the projects for you."}
+    {"id": "alignment", "zone": "technical", "label": "Alignment & control", "problem": "Nobody knows how to make a much smarter-than-human system reliably do what we intend, or how to stop it safely if it doesn't.", "buys": "Research time on alignment, interpretability and control: the technical core of the problem."},
+    {"id": "measurement", "zone": "evidence", "label": "Dangerous-capability evals", "problem": "We can't reliably tell how dangerous a new model is before it's deployed.", "buys": "Independent testing of frontier models and hard evidence about dangerous capabilities."},
+    {"id": "foresight", "zone": "evidence", "label": "Forecasting & strategy", "problem": "Decision-makers lack credible, specific forecasts of where AI is heading and how fast.", "buys": "Forecasts, scenarios and surveys that make timelines and risks concrete for decision-makers."},
+    {"id": "policy-research", "zone": "governance", "label": "Policy research & expertise", "problem": "Governments don't have the ideas or the in-house expertise to regulate frontier AI well.", "buys": "Policy research and people placed inside government who understand the technology."},
+    {"id": "legislation", "zone": "governance", "label": "Laws & lobbying", "problem": "There are still few binding rules on frontier AI development, and good bills need champions to pass.", "buys": "Direct work with legislators: drafting bills, briefing lawmakers and campaigning for them. Often not tax-deductible."},
+    {"id": "public", "zone": "society", "label": "Public understanding", "problem": "Most people haven't heard the case for AI risk, so there is little public demand for action.", "buys": "Explanations, demonstrations and campaigns that reach the general public."},
+    {"id": "accountability", "zone": "society", "label": "Corporate accountability", "problem": "AI companies set their own safety commitments, and little stops them from quietly weakening them.", "buys": "Independent watchdogs that track, grade and publicize how labs keep their promises."},
+    {"id": "talent", "zone": "field", "label": "Talent pipeline", "problem": "Too few skilled people work on these problems, and entry points are scarce.", "buys": "Courses, fellowships and mentorship that turn interested people into productive researchers and policy staff."},
+    {"id": "infrastructure", "zone": "field", "label": "Field infrastructure", "problem": "The field needs shared places to think, meet and find information, and those are rarely anyone's job to fund.", "buys": "Forums, venues and directories that everyone in the field relies on."},
+    {"id": "welfare", "zone": "technical", "label": "AI welfare", "problem": "We may build AI systems that deserve moral consideration without knowing it.", "buys": "Early research on AI sentience and practical welfare guidance for labs."},
+    {"id": "unfunded", "zone": "funding", "label": "Neglected projects", "problem": "Promising early-stage projects and unconventional researchers often fall through the cracks of big funders.", "buys": "Small, fast grants to work that larger funders miss. A fund picks the projects for you."}
   ],
   "orgs": [
     {
