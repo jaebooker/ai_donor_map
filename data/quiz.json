@@ -1,0 +1,66 @@
+{
+  "note": "Editorial quiz config. Each option adds points to problem ids from orgs.json. Flags change filtering: avoidLobbying hides orgs whose main focus is legislation; delegate/mixed/pick set how prominent funds are; earlyStage favors funds for overlooked work; needsDeduction highlights tax status.",
+  "questions": [
+    {
+      "id": "worry",
+      "title": "What worries you most about advanced AI?",
+      "hint": "Pick up to two.",
+      "max": 2,
+      "options": [
+        { "id": "control", "label": "AI systems pursuing goals we didn't intend, or that we can't switch off", "scores": { "alignment": 3, "measurement": 1 } },
+        { "id": "race", "label": "Companies racing ahead with no real rules", "scores": { "legislation": 3, "policy-research": 2, "accountability": 1 } },
+        { "id": "promises", "label": "AI companies quietly breaking their own safety promises", "scores": { "accountability": 3, "legislation": 1 } },
+        { "id": "capabilities", "label": "Dangerous abilities, like hacking or weapons help, discovered too late", "scores": { "measurement": 3, "alignment": 1 } },
+        { "id": "speed", "label": "Nobody knows how fast this is moving", "scores": { "foresight": 3, "measurement": 1 } },
+        { "id": "complacency", "label": "The public and politicians not taking the risk seriously", "scores": { "public": 3, "legislation": 1 } },
+        { "id": "minds", "label": "Creating AI minds that could suffer", "scores": { "welfare": 3 } }
+      ]
+    },
+    {
+      "id": "lever",
+      "title": "Where do you think the biggest difference gets made?",
+      "options": [
+        { "id": "lab", "label": "In the lab: better safety science", "scores": { "alignment": 2, "measurement": 1 } },
+        { "id": "government", "label": "In government: laws, regulators and expert staff", "scores": { "legislation": 2, "policy-research": 2 } },
+        { "id": "opinion", "label": "In public opinion and pressure on companies", "scores": { "public": 2, "accountability": 1 } },
+        { "id": "people", "label": "In people: getting more talented people working on it", "scores": { "talent": 2, "infrastructure": 1 } },
+        { "id": "unsure", "label": "Not sure", "scores": {} }
+      ]
+    },
+    {
+      "id": "lobbying",
+      "title": "How do you feel about your donation funding political lobbying?",
+      "options": [
+        { "id": "yes", "label": "Good, that's where the leverage is", "scores": { "legislation": 2 } },
+        { "id": "either", "label": "Fine either way", "scores": {} },
+        { "id": "avoid", "label": "I'd rather avoid it", "scores": { "legislation": -4 }, "flags": ["avoidLobbying"] }
+      ]
+    },
+    {
+      "id": "stage",
+      "title": "What would you rather back?",
+      "options": [
+        { "id": "established", "label": "Established organizations with a track record", "scores": {} },
+        { "id": "early", "label": "Overlooked, early-stage projects big funders miss", "scores": { "unfunded": 3 }, "flags": ["earlyStage"] },
+        { "id": "nopref", "label": "No preference", "scores": {} }
+      ]
+    },
+    {
+      "id": "style",
+      "title": "How hands-on do you want to be?",
+      "options": [
+        { "id": "pick", "label": "I'll pick specific organizations myself", "scores": {}, "flags": ["pick"] },
+        { "id": "delegate", "label": "Let experienced grantmakers choose for me", "scores": { "unfunded": 2 }, "flags": ["delegate"] },
+        { "id": "mixed", "label": "A mix of both", "scores": {}, "flags": ["mixed"] }
+      ]
+    },
+    {
+      "id": "tax",
+      "title": "Do you need your gift to be tax-deductible in the US?",
+      "options": [
+        { "id": "yes", "label": "Yes", "scores": {}, "flags": ["needsDeduction"] },
+        { "id": "no", "label": "No, or I'm outside the US", "scores": {} }
+      ]
+    }
+  ]
+}
